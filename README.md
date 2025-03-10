@@ -9,7 +9,9 @@ The AI Content Summariser is designed to help users quickly extract the key info
 ## Features
 
 - **Text Summarisation**: Generate concise summaries from long-form content
+- **URL Processing**: Extract and summarize content directly from web pages
 - **Adjustable Summary Length**: Control the length of generated summaries
+- **Advanced Generation Parameters**: Fine-tune the summarization with temperature and sampling controls
 - **Multiple Input Methods**: Paste text directly or provide URLs for web content
 - **Clean Interface**: Simple, intuitive UI for easy interaction
 - **Copy & Export**: Save or share your summaries with one click
@@ -21,18 +23,21 @@ The AI Content Summariser is designed to help users quickly extract the key info
 - **Frontend**: React/Next.js for a responsive and interactive UI
 - **Backend**: FastAPI for efficient API endpoints
 - **NLP Models**: Leveraging transformer-based models like BART or T5 for summarisation
+- **Web Scraping**: BeautifulSoup4 for extracting content from URLs
+- **HTTP Client**: HTTPX for asynchronous web requests
 - **Deployment**: Vercel/Netlify for frontend, Hugging Face Spaces for backend
 - **Storage**: Local storage for caching recent summaries
 
 ## Implementation Approach
 
-1. Build a clean, intuitive interface for text input and summary display
+1. Build a clean, intuitive interface for text and URL input and summary display
 2. Implement client-side preprocessing for text cleaning and validation
 3. Create efficient API endpoints for summarisation with proper error handling
 4. Integrate open-source NLP models for high-quality summarisation
-5. Implement caching strategies to improve performance and reduce API calls
-6. Add features for adjusting summary parameters (length, style)
-7. Provide options to export or share generated summaries
+5. Implement URL content extraction for direct web page summarization
+6. Add advanced parameters for fine-tuning the summarization process
+7. Implement caching strategies to improve performance and reduce API calls
+8. Provide options to export or share generated summaries
 
 ## Getting Started
 
@@ -79,10 +84,27 @@ Visit `http://localhost:3000` to access the application.
 - [x] Backend API development
 - [x] Model integration
 - [x] Basic summarisation functionality
-- [ ] Advanced features (URL processing, adjustable parameters)
+- [x] Advanced features (URL processing, adjustable parameters)
 - [ ] Deployment and testing
 - [ ] Performance optimization
 - [ ] User feedback integration
+
+## Advanced Features
+
+### URL Processing
+
+The application can now extract and summarize content directly from web pages:
+- Input a URL instead of raw text
+- Backend extracts the main content using BeautifulSoup
+- Filters out irrelevant elements like scripts, styles, headers, and footers
+- Processes the extracted content through the summarization pipeline
+
+### Adjustable Parameters
+
+Fine-tune your summaries with advanced controls:
+- **Minimum and Maximum Length**: Control how long or short your summary should be
+- **Sampling**: Toggle between deterministic and creative summarization
+- **Temperature**: When sampling is enabled, adjust how creative or focused the summary should be
 
 ## Contributing
 
@@ -96,3 +118,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Hugging Face for providing open-source NLP models
 - The transformer models community for advancing text summarisation technology
+- BeautifulSoup4 for HTML parsing capabilities

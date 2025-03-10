@@ -12,14 +12,16 @@ class SummariserService:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model.to(self.device)
 
-    def Summarise(self, text, max_length=150, min_length=50):
+    def summarise(self, text, max_length=150, min_length=50, do_sample=False, temperature=1.0):
         """
         Summarise the given text using the loaded model.
 
         Args:
-            text (str): The text to Summarise
+            text (str): The text to summarise
             max_length (int): Maximum length of the summary
             min_length (int): Minimum length of the summary
+            do_sample (bool): Whether to use sampling for generation
+            temperature (float): Sampling temperature (higher = more random)
 
         Returns:
             str: The generated summary
@@ -35,7 +37,9 @@ class SummariserService:
             min_length=min_length,
             num_beams=4,
             length_penalty=2.0,
-            early_stopping=True
+            early_stopping=True,
+            do_sample=do_sample,
+            temperature=temperature
         )
 
         summary = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)

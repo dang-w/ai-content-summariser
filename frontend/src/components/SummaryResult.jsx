@@ -19,6 +19,20 @@ const SummaryResult = ({ summary }) => {
         </div>
       </div>
 
+      {summary.source_type === 'url' && summary.source_url && (
+        <div className="mb-4 text-sm">
+          <span className="font-medium">Source: </span>
+          <a
+            href={summary.source_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline"
+          >
+            {summary.source_url}
+          </a>
+        </div>
+      )}
+
       <div className="bg-white p-4 rounded border mb-4">
         <p>{summary.summary}</p>
       </div>

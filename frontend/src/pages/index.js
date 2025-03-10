@@ -11,29 +11,38 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleSummarise = async (text, options) => {
+  const handleSummarise = async (data) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/Summarise`, {
+      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/${
+        data.type === 'url' ? 'summarise-url' : 'summarise'
+      }`;
+
+      const requestBody = {
+        [data.type === 'url' ? 'url' : 'text']: data.content,
+        max_length: data.options.maxLength,
+        min_length: data.options.minLength,
+        do_sample: data.options.doSample,
+        temperature: data.options.temperature
+      };
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          text,
-          max_length: options.maxLength,
-          min_length: options.minLength,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate summary');
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to generate summary');
       }
 
-      const data = await response.json();
-      setSummary(data);
+      const responseData = await response.json();
+      setSummary(responseData);
     } catch (err) {
       console.error('Error:', err);
       setError(err.message || 'An error occurred while generating the summary');
