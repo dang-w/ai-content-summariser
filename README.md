@@ -77,6 +77,40 @@ npm run dev
 
 Visit `http://localhost:3000` to access the application.
 
+## User Guide
+
+### Summarizing Text
+
+1. On the home page, ensure the "Text" tab is selected
+2. Paste your article, document, or any text into the text area
+3. Adjust the minimum and maximum length sliders to control summary length
+4. (Optional) Click "Show Advanced Options" to access additional controls:
+   - Toggle "Use sampling" for more creative summaries
+   - Adjust the temperature slider (0.7-2.0) to control creativity level
+5. Click the "Summarise" button
+6. View your summary in the results section
+7. Use the "Copy to Clipboard" button to copy the summary
+
+### Summarizing Web Content
+
+1. On the home page, click the "URL" tab
+2. Enter the URL of the web page you want to summarize
+3. Adjust the minimum and maximum length sliders to control summary length
+4. (Optional) Click "Show Advanced Options" to access additional controls
+5. Click the "Summarise" button
+6. View your summary in the results section, which will include a link to the source
+7. Use the "Copy to Clipboard" button to copy the summary
+
+### Advanced Options
+
+- **Minimum Length**: Controls the minimum number of characters in the summary
+- **Maximum Length**: Controls the maximum number of characters in the summary
+- **Use sampling**: When enabled, the model generates more creative and varied summaries
+- **Temperature**: When sampling is enabled, controls the creativity level:
+  - Higher values (1.5-2.0): More creative, diverse, and potentially less accurate
+  - Medium values (1.0-1.4): Balanced creativity and accuracy
+  - Lower values (0.7-0.9): More focused, deterministic, and potentially more accurate
+
 ## Project Roadmap
 
 - [x] Project setup and repository creation
@@ -89,22 +123,29 @@ Visit `http://localhost:3000` to access the application.
 - [ ] Performance optimization
 - [ ] User feedback integration
 
-## Advanced Features
+## Future Enhancements
 
-### URL Processing
+We're planning to add the following features in upcoming releases:
 
-The application can now extract and summarize content directly from web pages:
-- Input a URL instead of raw text
-- Backend extracts the main content using BeautifulSoup
-- Filters out irrelevant elements like scripts, styles, headers, and footers
-- Processes the extracted content through the summarization pipeline
+### 1. History and Saved Summaries
+- Save past summarizations for quick reference
+- Organize summaries by categories or tags
+- Export history in various formats (PDF, CSV)
 
-### Adjustable Parameters
+### 2. Multiple Summarization Models
+- Allow users to choose between different AI models
+- Offer specialized models for different content types (academic, news, technical)
+- Provide model comparison for the same content
 
-Fine-tune your summaries with advanced controls:
-- **Minimum and Maximum Length**: Control how long or short your summary should be
-- **Sampling**: Toggle between deterministic and creative summarization
-- **Temperature**: When sampling is enabled, adjust how creative or focused the summary should be
+### 3. Document Upload Support
+- Direct upload and summarization of PDF files
+- Support for DOCX, TXT, and other document formats
+- Batch processing of multiple documents
+
+### 4. Browser Extension
+- One-click summarization of web pages
+- Context menu integration for selected text
+- Automatic summarization of open tabs
 
 ## Contributing
 
