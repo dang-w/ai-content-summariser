@@ -11,14 +11,14 @@ class TextSummaryRequest(BaseModel):
     max_length: Optional[int] = Field(150, ge=30, le=500, description="Maximum length of the summary")
     min_length: Optional[int] = Field(50, ge=10, le=200, description="Minimum length of the summary")
     do_sample: Optional[bool] = Field(False, description="Whether to use sampling for generation")
-    temperature: Optional[float] = Field(1.0, ge=0.1, le=2.0, description="Sampling temperature")
+    temperature: Optional[float] = Field(1.0, ge=0.7, le=2.0, description="Sampling temperature")
 
 class URLSummaryRequest(BaseModel):
     url: HttpUrl = Field(..., description="The URL to extract content from and summarise")
     max_length: Optional[int] = Field(150, ge=30, le=500, description="Maximum length of the summary")
     min_length: Optional[int] = Field(50, ge=10, le=200, description="Minimum length of the summary")
     do_sample: Optional[bool] = Field(False, description="Whether to use sampling for generation")
-    temperature: Optional[float] = Field(1.0, ge=0.1, le=2.0, description="Sampling temperature")
+    temperature: Optional[float] = Field(1.0, ge=0.7, le=2.0, description="Sampling temperature")
 
 class SummaryResponse(BaseModel):
     original_text_length: int

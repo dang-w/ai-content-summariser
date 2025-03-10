@@ -30,17 +30,49 @@ class SummariserService:
         inputs = self.tokenizer(text, return_tensors="pt", truncation=True, max_length=1024)
         inputs = inputs.to(self.device)
 
-        # Generate summary
-        summary_ids = self.model.generate(
-            inputs["input_ids"],
-            max_length=max_length,
-            min_length=min_length,
-            num_beams=4,
-            length_penalty=2.0,
-            early_stopping=True,
-            do_sample=do_sample,
-            temperature=temperature
-        )
+        # Set generation parameters
+        generation_params = {
+            "max_length": max_length,
+            "min_length": min_length,
+            "num_beams": 4,
+            "length_penalty": 2.0,
+            "early_stopping": True,
+        }
+
+        # Handle sampling and temperature
+        if do_sample:
+            try:
+                # First attempt: try with the requested temperature
+                generation_params["do_sample"] = True
+                generation_params["temperature"] = temperature
+                summary_ids = self.model.generate(
+                    inputs["input_ids"],
+                    **generation_params
+                )
+            except Exception as e:
+                # If that fails, try with default temperature (1.0)
+                print(f"Error with temperature {temperature}, falling back to default: {str(e)}")
+                generation_params["temperature"] = 1.0
+                try:
+                    summary_ids = self.model.generate(
+                        inputs["input_ids"],
+                        **generation_params
+                    )
+                except Exception:
+                    # If sampling still fails, fall back to beam search without sampling
+                    print("Sampling failed, falling back to beam search")
+                    generation_params.pop("do_sample", None)
+                    generation_params.pop("temperature", None)
+                    summary_ids = self.model.generate(
+                        inputs["input_ids"],
+                        **generation_params
+                    )
+        else:
+            # Standard beam search without sampling
+            summary_ids = self.model.generate(
+                inputs["input_ids"],
+                **generation_params
+            )
 
         summary = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
         return summary

@@ -170,7 +170,7 @@ const SummaryForm = ({ onSubmit }) => {
                 <input
                   id="temperature"
                   type="range"
-                  min="0.1"
+                  min="0.7"  // Increased minimum to 0.7
                   max="2.0"
                   step="0.1"
                   value={temperature}
@@ -178,7 +178,8 @@ const SummaryForm = ({ onSubmit }) => {
                   className="w-full"
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Higher values produce more diverse summaries, lower values are more focused and deterministic.
+                  <strong>Recommended range:</strong> 0.7-2.0. Higher values produce more diverse summaries,
+                  lower values are more focused. Values below 0.7 may cause errors with some texts.
                 </p>
               </div>
             )}
