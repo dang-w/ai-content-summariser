@@ -1,53 +1,70 @@
-interface CacheOptions {
+interface SummaryOptions {
   maxLength: number;
   minLength: number;
   doSample: boolean;
   temperature: number;
 }
 
-interface CacheData {
-  timestamp: number;
-  data: any;
+interface SummaryData {
+  summary: string;
+  original_text_length: number;
+  summary_length: number;
+  source_type?: 'text' | 'url';
+  source_url?: string;
+  metadata?: {
+    input_word_count: number;
+    output_word_count: number;
+    compression_ratio: number;
+    model_used: string;
+    processing_device: string;
+  };
 }
 
-export function getSummaryFromCache(text: string, options: CacheOptions): any {
-  const cacheKey = `summary-${hashString(text)}-${JSON.stringify(options)}`;
+// Generate a cache key based on content and options
+const getCacheKey = (content: string, options: SummaryOptions): string => {
+  const contentHash = btoa(content.substring(0, 100)).replace(/[^a-zA-Z0-9]/g, '');
+  return `summary_${contentHash}_${options.maxLength}_${options.minLength}_${options.doSample}_${options.temperature}`;
+};
 
-  if (typeof window !== 'undefined') {
-    const cached = localStorage.getItem(cacheKey);
-
-    if (cached) {
-      try {
-        const { timestamp, data } = JSON.parse(cached) as CacheData;
-        // Check if cache is still valid (less than 24 hours old)
-        if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
-          return data;
-        }
-      } catch (e) {
-        console.error('Cache parsing error:', e);
-      }
-    }
-  }
-
-  return null;
-}
-
-export function saveSummaryToCache(text: string, options: CacheOptions, data: any): void {
-  const cacheKey = `summary-${hashString(text)}-${JSON.stringify(options)}`;
-
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(cacheKey, JSON.stringify({
-      timestamp: Date.now(),
-      data
+// Save summary to localStorage cache
+export const saveSummaryToCache = (
+  content: string,
+  options: SummaryOptions,
+  summary: SummaryData
+): void => {
+  try {
+    const key = getCacheKey(content, options);
+    localStorage.setItem(key, JSON.stringify({
+      summary,
+      timestamp: Date.now()
     }));
+  } catch (error) {
+    console.error('Error saving to cache:', error);
   }
-}
+};
 
-function hashString(str: string): string {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i);
-    hash |= 0;
+// Get summary from localStorage cache (if exists and not expired)
+export const getSummaryFromCache = (
+  content: string,
+  options: SummaryOptions
+): SummaryData | null => {
+  try {
+    const key = getCacheKey(content, options);
+    const cached = localStorage.getItem(key);
+
+    if (!cached) return null;
+
+    const { summary, timestamp } = JSON.parse(cached);
+
+    // Cache expires after 24 hours
+    if (Date.now() - timestamp > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(key);
+      return null;
+    }
+
+    return summary;
+  } catch (error) {
+    console.error('Error retrieving from cache:', error);
+    return null;
   }
-  return hash.toString(16);
-}
+};

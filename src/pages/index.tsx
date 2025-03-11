@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import SummaryForm from '../components/SummaryForm';
 import SummaryResult from '../components/SummaryResult';
 import LoadingIndicator from '../components/LoadingIndicator';
 import ErrorMessage from '../components/ErrorMessage';
+import SummariserStatus from '../components/SummariserStatus';
 import Layout from '../components/Layout/Layout';
 import { getSummaryFromCache, saveSummaryToCache } from '../utils/cache';
 
@@ -20,12 +21,72 @@ interface SummaryData {
   summary_length: number;
   source_type?: 'text' | 'url';
   source_url?: string;
+  metadata?: {
+    input_word_count: number;
+    output_word_count: number;
+    compression_ratio: number;
+    model_used: string;
+    processing_device: string;
+  };
+}
+
+interface StatusData {
+  model_loading: {
+    is_loading: boolean;
+    step: string;
+    progress: number;
+  };
+  current_job: {
+    in_progress: boolean;
+    input_word_count?: number;
+    stage?: string;
+    progress?: number;
+    time_remaining?: number;
+  };
+  device: string;
 }
 
 export default function Home() {
   const [summary, setSummary] = useState<SummaryData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<StatusData>({
+    model_loading: { is_loading: false, step: '', progress: 0 },
+    current_job: { in_progress: false },
+    device: 'cpu'
+  });
+
+  // Status polling
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (loading) {
+      // Start polling when processing begins
+      interval = setInterval(async () => {
+        try {
+          const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/status`;
+          const response = await fetch(apiUrl);
+
+          if (response.ok) {
+            const data = await response.json();
+            setStatus(data);
+
+            // If job is complete, stop polling
+            if (data.current_job && !data.current_job.in_progress &&
+                data.current_job.stage === 'Complete') {
+              clearInterval(interval);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching status:', error);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [loading]);
 
   const handleSummarise = async (data: {
     type: 'text' | 'url';
@@ -34,6 +95,7 @@ export default function Home() {
   }) => {
     setLoading(true);
     setError(null);
+    setSummary(null);
 
     try {
       // Check cache first
@@ -72,14 +134,24 @@ export default function Home() {
 
       const responseData = await response.json();
 
-      // Cache the result
-      saveSummaryToCache(data.content, data.options, responseData);
+      // Format the summary data
+      const summaryData: SummaryData = {
+        summary: responseData.summary,
+        original_text_length: data.content.length,
+        summary_length: responseData.summary.length,
+        source_type: data.type,
+        source_url: data.type === 'url' ? data.content : undefined,
+        metadata: responseData.metadata
+      };
 
-      setSummary(responseData);
+      // Cache the result
+      saveSummaryToCache(data.content, data.options, summaryData);
+
+      setSummary(summaryData);
+      setLoading(false);
     } catch (err: any) {
       console.error('Error:', err);
       setError(err.message || 'An error occurred while generating the summary');
-    } finally {
       setLoading(false);
     }
   };
@@ -97,11 +169,13 @@ export default function Home() {
           AI Content Summariser
         </h1>
 
+        <SummariserStatus status={status} />
+
         <SummaryForm onSubmit={handleSummarise} />
 
-        {loading && <LoadingIndicator />}
+        {loading && !summary && <LoadingIndicator />}
         {error && <ErrorMessage message={error} />}
-        {summary && !loading && <SummaryResult summary={summary} />}
+        {summary && <SummaryResult summary={summary} />}
       </main>
     </Layout>
   );

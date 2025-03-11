@@ -20,11 +20,11 @@ const SummaryForm = ({ onSubmit }: SummaryFormProps) => {
   const [inputType, setInputType] = useState<'text' | 'url'>('text');
   const [text, setText] = useState<string>('');
   const [url, setUrl] = useState<string>('');
-  const [maxLength, setMaxLength] = useState<number>(150);
-  const [minLength, setMinLength] = useState<number>(50);
-  const [advancedOpen, setAdvancedOpen] = useState<boolean>(false);
-  const [doSample, setDoSample] = useState<boolean>(false);
-  const [temperature, setTemperature] = useState<number>(1.0);
+  const [maxLength, setMaxLength] = useState<number>(250); // Increase from 150
+  const [minLength, setMinLength] = useState<number>(100); // Increase from 50
+  const [advancedOpen, setAdvancedOpen] = useState<boolean>(true);
+  const [doSample, setDoSample] = useState<boolean>(true);
+  const [temperature, setTemperature] = useState<number>(1.2);
   const debouncedText = useDebounce(text, 500);
 
   useEffect(() => {
