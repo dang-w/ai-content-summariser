@@ -1,7 +1,19 @@
 import { useState } from 'react';
 
-const SummaryResult = ({ summary }) => {
-  const [copied, setCopied] = useState(false);
+interface SummaryData {
+  summary: string;
+  original_text_length: number;
+  summary_length: number;
+  source_type?: 'text' | 'url';
+  source_url?: string;
+}
+
+interface SummaryResultProps {
+  summary: SummaryData;
+}
+
+const SummaryResult = ({ summary }: SummaryResultProps) => {
+  const [copied, setCopied] = useState<boolean>(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(summary.summary);

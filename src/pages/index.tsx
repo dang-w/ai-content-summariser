@@ -7,12 +7,31 @@ import ErrorMessage from '../components/ErrorMessage';
 import Layout from '../components/Layout/Layout';
 import { getSummaryFromCache, saveSummaryToCache } from '../utils/cache';
 
-export default function Home() {
-  const [summary, setSummary] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+interface SummaryOptions {
+  maxLength: number;
+  minLength: number;
+  doSample: boolean;
+  temperature: number;
+}
 
-  const handleSummarise = async (data) => {
+interface SummaryData {
+  summary: string;
+  original_text_length: number;
+  summary_length: number;
+  source_type?: 'text' | 'url';
+  source_url?: string;
+}
+
+export default function Home() {
+  const [summary, setSummary] = useState<SummaryData | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSummarise = async (data: {
+    type: 'text' | 'url';
+    content: string;
+    options: SummaryOptions;
+  }) => {
     setLoading(true);
     setError(null);
 
@@ -57,7 +76,7 @@ export default function Home() {
       saveSummaryToCache(data.content, data.options, responseData);
 
       setSummary(responseData);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error:', err);
       setError(err.message || 'An error occurred while generating the summary');
     } finally {

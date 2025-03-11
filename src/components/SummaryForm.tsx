@@ -1,22 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 import { useDebounce } from '../hooks/useDebounce';
 
-const SummaryForm = ({ onSubmit }) => {
-  const [inputType, setInputType] = useState('text'); // 'text' or 'url'
-  const [text, setText] = useState('');
-  const [url, setUrl] = useState('');
-  const [maxLength, setMaxLength] = useState(150);
-  const [minLength, setMinLength] = useState(50);
-  const [advancedOpen, setAdvancedOpen] = useState(false);
-  const [doSample, setDoSample] = useState(false);
-  const [temperature, setTemperature] = useState(1.0);
+interface SummaryOptions {
+  maxLength: number;
+  minLength: number;
+  doSample: boolean;
+  temperature: number;
+}
+
+interface SummaryFormProps {
+  onSubmit: (data: {
+    type: 'text' | 'url';
+    content: string;
+    options: SummaryOptions;
+  }) => void;
+}
+
+const SummaryForm = ({ onSubmit }: SummaryFormProps) => {
+  const [inputType, setInputType] = useState<'text' | 'url'>('text');
+  const [text, setText] = useState<string>('');
+  const [url, setUrl] = useState<string>('');
+  const [maxLength, setMaxLength] = useState<number>(150);
+  const [minLength, setMinLength] = useState<number>(50);
+  const [advancedOpen, setAdvancedOpen] = useState<boolean>(false);
+  const [doSample, setDoSample] = useState<boolean>(false);
+  const [temperature, setTemperature] = useState<number>(1.0);
   const debouncedText = useDebounce(text, 500);
 
   useEffect(() => {
     console.log(`Debounced text length: ${debouncedText.length}`);
   }, [debouncedText]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (inputType === 'text') {
@@ -85,7 +100,7 @@ const SummaryForm = ({ onSubmit }) => {
             </label>
             <textarea
               id="text"
-              rows="8"
+              rows={8}
               className="w-full p-2.5 border rounded-lg"
               placeholder="Paste your article, document, or any text here..."
               value={text}
