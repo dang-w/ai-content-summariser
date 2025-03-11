@@ -1,14 +1,12 @@
-version: '3.8'
-
 services:
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile.frontend
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app
+      - .:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
@@ -18,12 +16,12 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ../ai-content-summariser-api
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
+      - ../ai-content-summariser-api:/app
     environment:
       - ENVIRONMENT=development
       - CORS_ORIGINS=http://localhost:3000

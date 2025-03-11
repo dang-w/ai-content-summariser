@@ -1,10 +1,12 @@
-# AI Content Summariser
+# AI Content Summariser (Frontend)
 
 An intelligent tool that automatically generates concise summaries of articles, documents, and web content using natural language processing.
 
 ## Overview
 
 The AI Content Summariser is designed to help users quickly extract the key information from lengthy texts. It uses state-of-the-art NLP models to analyze content and produce accurate, readable summaries while preserving the essential meaning of the original text.
+
+This repository contains the frontend application built with Next.js. The backend API is available in a separate repository: [ai-content-summariser-api](https://github.com/dang-w/ai-content-summariser-api).
 
 ## Features
 
@@ -21,31 +23,17 @@ The AI Content Summariser is designed to help users quickly extract the key info
 ## Technology Stack
 
 - **Frontend**: React/Next.js for a responsive and interactive UI
-- **Backend**: FastAPI for efficient API endpoints
+- **Backend**: FastAPI (in separate repository)
 - **NLP Models**: Leveraging transformer-based models like BART or T5 for summarisation
-- **Web Scraping**: BeautifulSoup4 for extracting content from URLs
-- **HTTP Client**: HTTPX for asynchronous web requests
-- **Deployment**: Vercel/Netlify for frontend, Hugging Face Spaces for backend
-- **Storage**: Local storage for caching recent summaries
-
-## Implementation Approach
-
-1. Build a clean, intuitive interface for text and URL input and summary display
-2. Implement client-side preprocessing for text cleaning and validation
-3. Create efficient API endpoints for summarisation with proper error handling
-4. Integrate open-source NLP models for high-quality summarisation
-5. Implement URL content extraction for direct web page summarization
-6. Add advanced parameters for fine-tuning the summarization process
-7. Implement caching strategies to improve performance and reduce API calls
-8. Provide options to export or share generated summaries
+- **Deployment**: Vercel for frontend, Hugging Face Spaces for backend
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js (v14+)
-- Python (v3.8+)
 - npm or yarn
+- Docker (optional, for containerized development)
 
 ### Installation
 
@@ -54,30 +42,30 @@ The AI Content Summariser is designed to help users quickly extract the key info
 git clone https://github.com/dang-w/ai-content-summariser.git
 cd ai-content-summariser
 
-# Install frontend dependencies
-cd frontend
+# Install dependencies
 npm install
-
-# Install backend dependencies
-cd ../backend
-pip install -r requirements.txt
 ```
 
 ### Running Locally
 
-```bash
-# Start the backend server
-cd backend
-uvicorn main:app --reload
+#### Without Docker
 
-# In a separate terminal, start the frontend
-cd frontend
+```bash
+# Start the frontend application
 npm run dev
 ```
 
 Visit `http://localhost:3000` to access the application.
 
+#### With Docker
+
+Make sure you have both repositories cloned side by side:
+
 ## User Guide
+
+parent-directory/
+├── ai-content-summariser/
+└── ai-content-summariser-api/
 
 ### Summarizing Text
 
@@ -111,41 +99,9 @@ Visit `http://localhost:3000` to access the application.
   - Medium values (1.0-1.4): Balanced creativity and accuracy
   - Lower values (0.7-0.9): More focused, deterministic, and potentially more accurate
 
-## Project Roadmap
+## Deployment
 
-- [x] Project setup and repository creation
-- [x] Frontend UI implementation
-- [x] Backend API development
-- [x] Model integration
-- [x] Basic summarisation functionality
-- [x] Advanced features (URL processing, adjustable parameters)
-- [ ] Deployment and testing
-- [ ] Performance optimization
-- [ ] User feedback integration
-
-## Future Enhancements
-
-We're planning to add the following features in upcoming releases:
-
-### 1. History and Saved Summaries
-- Save past summarizations for quick reference
-- Organize summaries by categories or tags
-- Export history in various formats (PDF, CSV)
-
-### 2. Multiple Summarization Models
-- Allow users to choose between different AI models
-- Offer specialized models for different content types (academic, news, technical)
-- Provide model comparison for the same content
-
-### 3. Document Upload Support
-- Direct upload and summarization of PDF files
-- Support for DOCX, TXT, and other document formats
-- Batch processing of multiple documents
-
-### 4. Browser Extension
-- One-click summarization of web pages
-- Context menu integration for selected text
-- Automatic summarization of open tabs
+See the [deployment guide](./deployment_guide.md) for detailed instructions on deploying both the frontend and backend components.
 
 ## Contributing
 
