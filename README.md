@@ -12,20 +12,45 @@ This repository contains the frontend application built with Next.js. The backen
 
 - **Text Summarisation**: Generate concise summaries from long-form content
 - **URL Processing**: Extract and summarize content directly from web pages
-- **Adjustable Summary Length**: Control the length of generated summaries
-- **Advanced Generation Parameters**: Fine-tune the summarization with temperature and sampling controls
+- **Adjustable Summary Length**: Control the length of generated summaries (30-500 characters)
+- **Advanced Generation Parameters**: Fine-tune the summarization with temperature (0.7-2.0) and sampling controls
 - **Multiple Input Methods**: Paste text directly or provide URLs for web content
 - **Clean Interface**: Simple, intuitive UI for easy interaction
 - **Copy & Export**: Save or share your summaries with one click
 - **Caching**: Store recent summaries to avoid redundant processing
 - **Responsive Design**: Works seamlessly across desktop and mobile devices
+- **Real-time Status Updates**: Monitor the progress of summarization tasks
 
 ## Technology Stack
 
-- **Frontend**: React/Next.js for a responsive and interactive UI
-- **Backend**: FastAPI (in separate repository)
-- **NLP Models**: Leveraging transformer-based models like BART or T5 for summarisation
+- **Frontend Framework**: React 18 with Next.js 13
+- **Styling**: Tailwind CSS for responsive design
+- **HTTP Client**: Axios for API communication
+- **State Management**: React Hooks for local state management
+- **Testing**: Jest and React Testing Library
+- **Type Safety**: TypeScript for improved developer experience
 - **Deployment**: Vercel for frontend, Hugging Face Spaces for backend
+
+## Project Structure
+
+```
+ai-content-summariser/
+├── src/
+│   ├── components/       # UI components
+│   ├── pages/            # Next.js pages
+│   ├── services/         # API service layer
+│   ├── utils/            # Utility functions
+│   ├── hooks/            # Custom React hooks
+│   └── styles/           # Global styles and Tailwind config
+├── public/               # Static assets
+├── __tests__/            # Test files
+├── .env.development      # Development environment variables
+├── .env.production       # Production environment variables
+├── tsconfig.json         # TypeScript configuration
+├── tailwind.config.js    # Tailwind CSS configuration
+├── jest.config.js        # Jest configuration
+└── package.json          # Project dependencies and scripts
+```
 
 ## Getting Started
 
@@ -46,9 +71,16 @@ cd ai-content-summariser
 npm install
 ```
 
-### Running Locally
+### Environment Setup
 
-#### Without Docker
+Create a `.env.local` file in the root directory with the following variables:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:8000  # For local development
+# NEXT_PUBLIC_API_URL=https://dang-w-ai-content-summariser-api.hf.space  # For production
+```
+
+### Running Locally
 
 ```bash
 # Start the frontend application
@@ -57,15 +89,46 @@ npm run dev
 
 Visit `http://localhost:3000` to access the application.
 
-#### With Docker
+### Building for Production
 
-Make sure you have both repositories cloned side by side:
+```bash
+# Build the application
+npm run build
+
+# Start the production server
+npm start
+```
+
+## Docker Deployment
+
+For containerized deployment, use the provided Dockerfile.frontend:
+
+```bash
+# Build the Docker image
+docker build -t ai-content-summariser-frontend -f Dockerfile.frontend .
+
+# Run the container
+docker run -p 3000:3000 ai-content-summariser-frontend
+```
+
+For a complete setup with both frontend and backend, use docker-compose:
+
+```bash
+# Start both services
+docker-compose up
+```
+
+## Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+```
 
 ## User Guide
-
-parent-directory/
-├── ai-content-summariser/
-└── ai-content-summariser-api/
 
 ### Summarizing Text
 
@@ -88,16 +151,6 @@ parent-directory/
 5. Click the "Summarise" button
 6. View your summary in the results section, which will include a link to the source
 7. Use the "Copy to Clipboard" button to copy the summary
-
-### Advanced Options
-
-- **Minimum Length**: Controls the minimum number of characters in the summary
-- **Maximum Length**: Controls the maximum number of characters in the summary
-- **Use sampling**: When enabled, the model generates more creative and varied summaries
-- **Temperature**: When sampling is enabled, controls the creativity level:
-  - Higher values (1.5-2.0): More creative, diverse, and potentially less accurate
-  - Medium values (1.0-1.4): Balanced creativity and accuracy
-  - Lower values (0.7-0.9): More focused, deterministic, and potentially more accurate
 
 ## Deployment
 
