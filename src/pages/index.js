@@ -5,6 +5,7 @@ import SummaryResult from '../components/SummaryResult';
 import LoadingIndicator from '../components/LoadingIndicator';
 import ErrorMessage from '../components/ErrorMessage';
 import Layout from '../components/Layout/Layout';
+import { getSummaryFromCache, saveSummaryToCache } from '../utils/cache';
 
 export default function Home() {
   const [summary, setSummary] = useState(null);
@@ -16,6 +17,15 @@ export default function Home() {
     setError(null);
 
     try {
+      // Check cache first
+      const cachedSummary = getSummaryFromCache(data.content, data.options);
+      if (cachedSummary) {
+        setSummary(cachedSummary);
+        setLoading(false);
+        return;
+      }
+
+      // If not in cache, fetch from API
       const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/${
         data.type === 'url' ? 'summarise-url' : 'summarise'
       }`;
@@ -42,6 +52,10 @@ export default function Home() {
       }
 
       const responseData = await response.json();
+
+      // Cache the result
+      saveSummaryToCache(data.content, data.options, responseData);
+
       setSummary(responseData);
     } catch (err) {
       console.error('Error:', err);

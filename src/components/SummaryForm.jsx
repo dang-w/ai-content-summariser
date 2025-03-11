@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDebounce } from '../hooks/useDebounce';
 
 const SummaryForm = ({ onSubmit }) => {
   const [inputType, setInputType] = useState('text'); // 'text' or 'url'
@@ -9,6 +10,11 @@ const SummaryForm = ({ onSubmit }) => {
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [doSample, setDoSample] = useState(false);
   const [temperature, setTemperature] = useState(1.0);
+  const debouncedText = useDebounce(text, 500);
+
+  useEffect(() => {
+    console.log(`Debounced text length: ${debouncedText.length}`);
+  }, [debouncedText]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
