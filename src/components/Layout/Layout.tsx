@@ -1,5 +1,6 @@
 import Header from './Header';
 import Footer from './Footer';
+import EnvironmentIndicator from '../EnvironmentIndicator';
 import { ReactNode } from 'react';
 
 interface LayoutProps {
@@ -14,6 +15,7 @@ const Layout = ({ children }: LayoutProps) => {
         {children}
       </div>
       <Footer />
+      <EnvironmentIndicator />
     </div>
   );
 };

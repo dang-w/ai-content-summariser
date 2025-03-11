@@ -7,13 +7,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import SummariserStatus from '../components/SummariserStatus';
 import Layout from '../components/Layout/Layout';
 import { getSummaryFromCache, saveSummaryToCache } from '../utils/cache';
-
-interface SummaryOptions {
-  maxLength: number;
-  minLength: number;
-  doSample: boolean;
-  temperature: number;
-}
+import { summarizeText, summarizeUrl, getApiStatus, SummaryOptions } from '../services/api';
 
 interface SummaryData {
   summary: string;
@@ -64,18 +58,13 @@ export default function Home() {
       // Start polling when processing begins
       interval = setInterval(async () => {
         try {
-          const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/status`;
-          const response = await fetch(apiUrl);
+          const data = await getApiStatus();
+          setStatus(data);
 
-          if (response.ok) {
-            const data = await response.json();
-            setStatus(data);
-
-            // If job is complete, stop polling
-            if (data.current_job && !data.current_job.in_progress &&
-                data.current_job.stage === 'Complete') {
-              clearInterval(interval);
-            }
+          // If job is complete, stop polling
+          if (data.current_job && !data.current_job.in_progress &&
+              data.current_job.stage === 'Complete') {
+            clearInterval(interval);
           }
         } catch (error) {
           console.error('Error fetching status:', error);
@@ -107,32 +96,13 @@ export default function Home() {
       }
 
       // If not in cache, fetch from API
-      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/${
-        data.type === 'url' ? 'summarise-url' : 'summarise'
-      }`;
+      let responseData;
 
-      const requestBody = {
-        [data.type === 'url' ? 'url' : 'text']: data.content,
-        max_length: data.options.maxLength,
-        min_length: data.options.minLength,
-        do_sample: data.options.doSample,
-        temperature: data.options.temperature
-      };
-
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to generate summary');
+      if (data.type === 'text') {
+        responseData = await summarizeText(data.content, data.options);
+      } else {
+        responseData = await summarizeUrl(data.content, data.options);
       }
-
-      const responseData = await response.json();
 
       // Format the summary data
       const summaryData: SummaryData = {
